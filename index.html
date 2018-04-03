@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Hangman Game</title>
+
+   <!-- Added link to the jQuery Library -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+   <!-- Added a link to Bootstrap-->
+   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+       crossorigin="anonymous">
+
+<style>
+#word {
+  background: black;
+  margin: 0px;
+  height: 125px;
+  padding: 30px;
+  color: white;
+}
+
+#word h1 {
+  font-size: 42px;
+}
+
+#comment {
+  padding-top: 30px;
+  color: green;
+}
+
+.jumbotron {
+  margin-bottom: 0px;
+  padding-bottom: 15px;
+}
+
+</style>
+
+</head>
+<body>
+  <!-- HTML -->
+  <div id="comment" class="jumbotron">
+    <h1 class="text-center">Let's Play Hangman</h1>
+    <!-- <h3 id="comment" class="text-center">Pick a letter</h3> -->
+  </div>
+  <div id="word" class="jumbotron">
+    <h1 class="text-center"></h1>
+  </div>
+  <br/>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 text-right">
+        <h5>Guessed Letter:</h5>
+      </div>
+      <div class="col-lg-6 text-left">
+        <h5 id="guessedLetter">?</h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6 text-right">
+        <h5>Remaining Guesses:</h5>
+      </div>
+      <div id="remaingGuesses" class="col-lg-6 text-left">
+        <h5>000</h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6 text-right">
+        <h5>Wrong Guesses:</h5>
+      </div>
+      <div id="badGuesses" class="col-lg-6 text-left">
+        <h5></h5>
+      </div>
+    </div>
+
+  </div>
+  <script>
+    // <!-- Declare global variables -->
+    var words = [
+      "baker",
+      "hamilton",
+      "california",
+      "state"
+    ];
+
+    // Get a random number based on "words" array
+    var randomNumber = Math.floor(Math.random() * words.length);
+
+    // Set the randomly generated secret word and convert to upper case
+    var secretWord = words[randomNumber];
+    secretWord = secretWord.toUpperCase();
+
+    // Keep track of wrong guesses
+    var badGuesses = [];
+
+    // Set max wrong guesses
+    var numOfGuesses = 11;
+
+    // Keep track of correct guesses
+    var guessedWord = [];
+
+    // Get secret word spaces  
+    for (var i = 0; i < secretWord.length; i++) {
+      guessedWord[i] = "_";
+    }
+
+    // Display the current guessed word with spaces, blanks, and matched letters
+    function displaySecretWord(){
+      $("#word h1").text("");
+      for (var i = 0; i < guessedWord.length; i++) {
+        $("#word h1").append(guessedWord[i] + " ");
+      }
+    }
+
+    // Initialize gameboard
+    displaySecretWord();
+    $("#remaingGuesses h5").text(numOfGuesses);
+
+
+    // Get the keypress
+    $("body").keypress(function(event) {
+      var match;
+
+      //  Get key press - convert to string and to lower case
+      var guess = String.fromCharCode(event.which);
+      guess = guess.toUpperCase();
+      
+      // Display users guessed letter
+      $("#guessedLetter").text(guess);
+
+      // Loop through the secret word
+      for (var i = 0; i < secretWord.length; i++) {
+        if (secretWord[i] == guess) {        
+          guessedWord[i] = secretWord[i];
+          match = true;
+        }
+      }
+      // Check if the users key press matches any letters in the secret word
+      if (!match) {
+        numOfGuesses--;
+        $("#remaingGuesses h5").text(numOfGuesses);
+
+        badGuesses.push(guess);
+        $("#badGuesses h5").text(badGuesses.join(' '));
+
+        if (numOfGuesses <= 0){
+          $("#comment h1").attr("style", "color: red");
+          $("#comment h1").text("You Lose!!!");
+        }
+      }
+      
+      // Update the game board after keypress
+      displaySecretWord();
+    });
+
+  </script>
+</body>
+</html>
